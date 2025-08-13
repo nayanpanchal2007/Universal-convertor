@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>AI-Powered File Converter - Free & Online</title>
+    <meta name="description" content="A free, fast, and AI-enhanced online tool to convert your files. Generate SEO-friendly filenames and alt text for your images instantly using AI.">
+    <meta name="keywords" content="ai file converter, file converter, image converter, generate alt text, seo filename, png to jpg, jpg to png, webp to png, free converter, ai tools">
+    <meta name="author" content="YourAppName">
+    <link rel="canonical" href="https://your-domain.com/">
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .ad-placeholder {
+            background-color: #f0f0f0;
+            border: 2px dashed #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        #drop-zone {
+            border: 2px dashed #cbd5e1;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        #drop-zone.dragover {
+            background-color: #eef2ff;
+            border-color: #4f46e5;
+        }
+        /* Style for the select dropdown arrow */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        /* Simple spinner for loading states */
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #4f46e5;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto p-4 max-w-4xl">
+        
+        <header class="text-center my-6">
+            <h1 class="text-4xl font-bold text-indigo-600">AI-Powered File Converter</h1>
+            <p class="text-slate-500 mt-2">Convert files and enhance them with AI-generated metadata.</p>
+        </header>
+        
+        <div class="ad-placeholder h-24 w-full max-w-2xl mx-auto my-4 rounded-lg">
+            Top Banner Ad (e.g., 728x90)
+        </div>
+
+        <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-2xl mx-auto">
+            <div id="converter-ui">
+                <!-- Step 1: File Upload -->
+                <div id="drop-zone" class="relative w-full p-8 text-center rounded-xl cursor-pointer hover:bg-slate-100">
+                    <input type="file" id="file-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                        <svg class="w-12 h-12 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                        </svg>
+                        <p class="text-slate-600 font-semibold">Drag & drop your image here</p>
+                        <p class="text-slate-500 text-sm">or</p>
+                        <p class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium">Click to select a file</p>
+                    </div>
+                </div>
+                <div id="file-info" class="mt-4 text-center text-sm text-slate-600 hidden"></div>
+                
+                <!-- Step 2: Choose Output Format -->
+                <div class="mt-6">
+                    <label for="output-format" class="block text-sm font-medium text-slate-700 mb-2">Convert to:</label>
+                    <select id="output-format" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition bg-white">
+                        <option value="" selected disabled>Select a format</option>
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                        <option value="webp">WEBP</option>
+                        <option value="bmp">BMP</option>
+                    </select>
+                </div>
+
+                <!-- Step 3: Convert Button -->
+                <div class="mt-8">
+                    <button id="convert-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center space-x-2">
+                        <svg id="convert-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.664 0l3.181-3.183m-11.664 0l4.992-4.993m-4.993 0l3.181-3.183a8.25 8.25 0 0111.664 0l3.181 3.183" />
+                        </svg>
+                        <span id="button-text">Convert File</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result/Download Area -->
+            <div id="result-area" class="mt-6 text-center hidden">
+                <p class="text-lg font-semibold text-green-600">Conversion Successful!</p>
+                <a id="download-link" class="mt-4 inline-block bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-all duration-300">
+                    Download File
+                </a>
+                
+                <!-- AI Features Section -->
+                <div class="mt-6 border-t pt-6">
+                    <h3 class="text-lg font-semibold text-slate-700">✨ AI Enhancements</h3>
+                    <p class="text-sm text-slate-500 mb-4">Use AI to generate useful metadata for your image.</p>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button id="suggest-name-btn" class="flex-1 bg-slate-100 text-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-200 transition-all flex items-center justify-center space-x-2">
+                            <span class="btn-spinner hidden spinner"></span>
+                            <span>Suggest SEO Name</span>
+                        </button>
+                        <button id="generate-alt-btn" class="flex-1 bg-slate-100 text-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-200 transition-all flex items-center justify-center space-x-2">
+                             <span class="btn-spinner hidden spinner"></span>
+                            <span>Generate Alt Text</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- AI Generated Alt Text Display -->
+                <div id="alt-text-result" class="mt-4 hidden">
+                    <label for="alt-text-output" class="block text-sm font-medium text-slate-700 mb-1 text-left">Generated Alt Text:</label>
+                    <div class="relative">
+                        <textarea id="alt-text-output" rows="3" class="w-full p-2 border border-slate-300 rounded-lg bg-slate-50 text-sm" readonly></textarea>
+                        <button id="copy-alt-text-btn" class="absolute top-2 right-2 bg-slate-200 text-slate-600 p-1 rounded-md hover:bg-slate-300">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Message/Error Area -->
+            <div id="message-area" class="mt-4 text-center text-red-600 font-medium"></div>
+        </main>
+
+        <!-- SEO Content and Instructions -->
+        <section class="mt-12 text-slate-600 text-sm leading-relaxed max-w-2xl mx-auto">
+            <h2 class="text-xl font-bold text-slate-800 mb-3">How to Use Our AI Converter</h2>
+            <ol class="list-decimal list-inside space-y-2">
+                <li><strong>Upload Your Image:</strong> Drag and drop your image or click to select a file.</li>
+                <li><strong>Choose Output Format:</strong> Select a format like PNG, JPG, or WEBP.</li>
+                <li><strong>Convert:</strong> Click the "Convert File" button.</li>
+                <li><strong>Download & Enhance:</strong> After conversion, you can download your file or use our ✨ AI tools to generate an SEO-friendly filename and accessibility alt text.</li>
+            </ol>
+        </section>
+
+        <!-- Bottom Ad Banner Placeholder -->
+        <div class="ad-placeholder h-24 w-full max-w-2xl mx-auto my-8 rounded-lg">
+            Bottom Banner Ad (e.g., 728x90)
+        </div>
+
+        <footer class="text-center text-sm text-slate-400 py-6">
+            <p>&copy; <span id="year"></span> Your App Name. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileInfo = document.getElementById('file-info');
+        const outputFormatInput = document.getElementById('output-format');
+        const convertBtn = document.getElementById('convert-btn');
+        const buttonText = document.getElementById('button-text');
+        const resultArea = document.getElementById('result-area');
+        const downloadLink = document.getElementById('download-link');
+        const messageArea = document.getElementById('message-area');
+        const suggestNameBtn = document.getElementById('suggest-name-btn');
+        const generateAltBtn = document.getElementById('generate-alt-btn');
+        const altTextResult = document.getElementById('alt-text-result');
+        const altTextOutput = document.getElementById('alt-text-output');
+        const copyAltTextBtn = document.getElementById('copy-alt-text-btn');
+        
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        let selectedFile = null;
+        let convertedImageDataUrl = null; // Store converted image data for AI features
+
+        // --- Drag and Drop Handlers ---
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) handleFile(files[0]);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showMessage('Please upload a valid image file.');
+                return;
+            }
+            selectedFile = file;
+            fileInfo.textContent = `Selected file: ${file.name}`;
+            fileInfo.classList.remove('hidden');
+            messageArea.textContent = '';
+            resultArea.classList.add('hidden');
+            altTextResult.classList.add('hidden');
+            convertedImageDataUrl = null;
+            updateButtonState();
+        }
+
+        function updateButtonState() {
+            const outputFormat = outputFormatInput.value;
+            convertBtn.disabled = !selectedFile || !outputFormat;
+        }
+
+        outputFormatInput.addEventListener('change', updateButtonState);
+
+        // --- Main Conversion Logic ---
+        convertBtn.addEventListener('click', async () => {
+            if (convertBtn.disabled) return;
+            const outputFormat = outputFormatInput.value;
+            await convertImage(outputFormat);
+        });
+
+        async function convertImage(targetFormat) {
+            setLoading(true, convertBtn);
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        
+                        if (targetFormat === 'jpg' || targetFormat === 'bmp') {
+                            ctx.fillStyle = '#FFFFFF';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        }
+                        
+                        ctx.drawImage(img, 0, 0);
+
+                        const mimeType = `image/${targetFormat === 'jpg' ? 'jpeg' : targetFormat}`;
+                        convertedImageDataUrl = canvas.toDataURL(mimeType, 1.0);
+
+                        if (convertedImageDataUrl.length < 20) throw new Error('Canvas conversion failed.');
+
+                        const originalName = selectedFile.name.substring(0, selectedFile.name.lastIndexOf('.'));
+                        downloadLink.href = convertedImageDataUrl;
+                        downloadLink.download = `${originalName}.${targetFormat}`;
+
+                        resultArea.classList.remove('hidden');
+                        messageArea.textContent = '';
+                    } catch (error) {
+                         showMessage(`Conversion Error: ${error.message}`);
+                    } finally {
+                        setLoading(false, convertBtn);
+                    }
+                };
+                img.onerror = () => {
+                    showMessage('The selected file is not a valid or supported image.');
+                    setLoading(false, convertBtn);
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = () => {
+                showMessage('Error reading the file.');
+                setLoading(false, convertBtn);
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+
+        // --- Gemini API Integration ---
+        const API_KEY = ""; // Leave empty, will be handled by the environment
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+
+        async function callGeminiVisionAPI(prompt, imageDataUrl, button) {
+            if (!imageDataUrl) {
+                showMessage("Please convert an image first.");
+                return;
+            }
+
+            setLoading(true, button);
+            messageArea.textContent = '';
+
+            const base64ImageData = imageDataUrl.split(',')[1];
+            const payload = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        { inlineData: { mimeType: "image/jpeg", data: base64ImageData } }
+                    ]
+                }],
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error ? error.error.message : 'API request failed');
+                }
+
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (!text) {
+                    throw new Error("AI did not return a valid response.");
+                }
+                return text.trim().replace(/["']/g, ''); // Clean up quotes from response
+
+            } catch (error) {
+                showMessage(`AI Error: ${error.message}`);
+                return null;
+            } finally {
+                setLoading(false, button);
+            }
+        }
+
+        suggestNameBtn.addEventListener('click', async () => {
+            const prompt = "Analyze this image and suggest a concise, descriptive, SEO-friendly filename for it. The filename should be in kebab-case-with-no-extension. For example: a-red-sports-car-on-a-racetrack";
+            const suggestedName = await callGeminiVisionAPI(prompt, convertedImageDataUrl, suggestNameBtn);
+            if (suggestedName) {
+                const currentExtension = downloadLink.download.split('.').pop();
+                downloadLink.download = `${suggestedName}.${currentExtension}`;
+                showMessage(`Filename updated to: ${downloadLink.download}`);
+                // Briefly highlight the download button
+                downloadLink.classList.add('ring-2', 'ring-green-500');
+                setTimeout(() => downloadLink.classList.remove('ring-2', 'ring-green-500'), 2000);
+            }
+        });
+
+        generateAltBtn.addEventListener('click', async () => {
+            const prompt = "Analyze this image and write a concise, descriptive alt text for it. The alt text should be a short sentence describing the main subject of the image for accessibility and SEO purposes.";
+            const altText = await callGeminiVisionAPI(prompt, convertedImageDataUrl, generateAltBtn);
+            if (altText) {
+                altTextOutput.value = altText;
+                altTextResult.classList.remove('hidden');
+            }
+        });
+        
+        copyAltTextBtn.addEventListener('click', () => {
+            altTextOutput.select();
+            document.execCommand('copy');
+            copyAltTextBtn.innerHTML = 'Copied!';
+            setTimeout(() => {
+                 copyAltTextBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>`;
+            }, 1500);
+        });
+
+        // --- Helper Functions ---
+        function showMessage(text) {
+            messageArea.textContent = text;
+        }
+
+        function setLoading(isLoading, button) {
+            const spinner = button.querySelector('.btn-spinner');
+            const buttonTextSpan = button.querySelector('span:not(.btn-spinner)');
+            
+            button.disabled = isLoading;
+            if (isLoading) {
+                spinner?.classList.remove('hidden');
+                if (button.id === 'convert-btn') buttonTextSpan.textContent = 'Converting...';
+            } else {
+                spinner?.classList.add('hidden');
+                if (button.id === 'convert-btn') buttonTextSpan.textContent = 'Convert File';
+            }
+        }
+
+        // Initial state
+        updateButtonState();
+    </script>
+</body>
+</html>
